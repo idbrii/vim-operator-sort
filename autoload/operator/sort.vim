@@ -55,10 +55,15 @@ function! s:compare_modeless(x, y)  "{{{2
 endfunction
 
 
+function! s:is_num(x) abort  "{{{2
+  return a:x =~# '^\d\+'
+endf
+
+
 function! s:compare(x, y)  "{{{2
   if a:x == '' || a:y == ''
     return 0
-  elseif s:sort_mode == 'n'
+  elseif s:sort_mode == 'n' && s:is_num(a:x) && s:is_num(a:y)
     " Non numbers will return 0. Seems good enough.
     return s:compare_modeless(str2nr(a:x), str2nr(a:y))
   end
