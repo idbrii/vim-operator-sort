@@ -45,6 +45,17 @@ endfunction
 
 
 " Comparison  "{{{1
+function! s:to_num(x) abort
+  let num = str2nr(a:x)
+  if num
+    return num
+  endif
+  " If it's not a number (or it's 0), use the string value. 0 is sorted the
+  " same against numbers or strings because it's a single digit.
+  return a:x
+endf
+
+
 function! s:compare_modeless(x, y)  "{{{2
   if a:x == a:y
     return 0
@@ -55,19 +66,17 @@ function! s:compare_modeless(x, y)  "{{{2
 endfunction
 
 
-function! s:is_num(x) abort  "{{{2
-  return a:x =~# '^\d\+'
-endf
-
-
 function! s:compare(x, y)  "{{{2
-  if a:x == '' || a:y == ''
+  let x = a:x
+  let y = a:y
+  if x == '' || y == ''
     return 0
-  elseif s:sort_mode == 'n' && s:is_num(a:x) && s:is_num(a:y)
-    " Non numbers will return 0. Seems good enough.
-    return s:compare_modeless(str2nr(a:x), str2nr(a:y))
   end
-  return s:compare_modeless(a:x, a:y)
+  if s:sort_mode == 'n'
+    let x = s:to_num(x)
+    let y = s:to_num(y)
+  end
+  return s:compare_modeless(x, y)
 endfunction
 
 
